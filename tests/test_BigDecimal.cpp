@@ -1,4 +1,4 @@
-#include "../BigDecimal.h"
+#include "BigDecimal.h"
 #include <iostream>
 #include <string>
 using namespace std;

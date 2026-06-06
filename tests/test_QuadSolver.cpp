@@ -1,4 +1,4 @@
-#include "../QuadSolver.h"
+#include "QuadSolver.h"
 #include <iostream>
 #include <string>
 using namespace std;

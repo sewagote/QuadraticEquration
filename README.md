@@ -5,7 +5,14 @@
 ## Сборка
 
 ```bash
-g++ -std=c++17 -o QuadraticSolver main.cpp BigDecimal.cpp UnsignedArith.cpp QuadSolver.cpp
+g++ -std=c++17 -Iinclude -o QuadraticSolver src/main.cpp src/BigDecimal.cpp src/UnsignedArith.cpp src/QuadSolver.cpp
+```
+
+Или через CMake:
+
+```bash
+cmake -B build && cmake --build build
+./build/QuadraticSolver
 ```
 
 ## Запуск
@@ -39,15 +46,24 @@ bash run_tests.sh
 ## Структура
 
 ```
-main.cpp              — меню и вывод результата
-├── QuadSolver.h/cpp  — решение уравнения, формула дискриминанта
-│   └── BigDecimal.h/cpp  — числа произвольной точности
-│       └── UnsignedArith.h/cpp  — сложение, вычитание, умножение, деление строк
-└── tests/
-    └── test_QuadSolver.cpp  — 23 теста всех случаев
+include/                 — заголовки (.h)
+│   ├── QuadSolver.h
+│   ├── BigDecimal.h
+│   └── UnsignedArith.h
+src/                     — реализация (.cpp)
+│   ├── main.cpp             — меню и вывод результата
+│   ├── QuadSolver.cpp       — решение уравнения, формула дискриминанта
+│   ├── BigDecimal.cpp       — числа произвольной точности
+│   └── UnsignedArith.cpp    — сложение, вычитание, умножение, деление строк
+tests/                   — тесты
+│   ├── test_QuadSolver.cpp
+│   ├── test_BigDecimal.cpp
+│   └── test_UnsignedArith.cpp
+CMakeLists.txt
+run_tests.sh
 ```
 
-Каждый слой знает только о слое ниже. `main` не работает с `BigDecimal` напрямую.
+Зависимости по слоям: `main` → `QuadSolver` → `BigDecimal` → `UnsignedArith`. Каждый слой знает только о слое ниже — `main` не работает с `BigDecimal` напрямую.
 
 ## Как работает
 
