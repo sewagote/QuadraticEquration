@@ -291,16 +291,33 @@ BigDecimal sqrtBigDecimal(const BigDecimal& a, int precision) {
     BigDecimal zero;
     if (a.isZero() || a.isNegative) return zero;
 
-    string s = a.toString();
-    string sShort = s.substr(0, min((int)s.size(), 15));
-    double approx = 1.0;
-    try { approx = sqrt(stod(sShort)); } catch (...) {}
-    if (approx <= 0) approx = 1.0;
+    // Начальное приближение: берём мантиссу (первые цифры) и реальный порядок числа.
+    // Десятичный порядок числа = exponent10 + (число цифр) - 1.
+    // sqrt уменьшает порядок вдвое, поэтому начальное приближение
+    // строим как (sqrt мантиссы) * 10^(порядок / 2).
+    long long expVal = stoll(normalizeString(a.exponent10));
+    long long order = expVal + (long long)a.digits.size() - 1;  // порядок a
+
+    // мантисса в [1, 10): первая цифра . остальные
+    string mant = a.digits.substr(0, min((size_t)15, a.digits.size()));
+    double mantVal = stod(mant.substr(0, 1) + "." + (mant.size() > 1 ? mant.substr(1) : "0"));
+
+    double rootMant = sqrt(mantVal);   // sqrt мантиссы, ~[1, 3.2)
+    long long rootOrder = order / 2;   // половина порядка
+    if (order % 2 != 0) {
+        // нечётный порядок: домножаем мантиссу на sqrt(10)
+        rootMant *= (order > 0) ? sqrt(10.0) : 1.0 / sqrt(10.0);
+        if (order < 0) rootOrder = (order - 1) / 2;
+    }
 
     char buf[64];
-    snprintf(buf, sizeof(buf), "%.10e", approx);
+    snprintf(buf, sizeof(buf), "%.10e", rootMant);
     BigDecimal x;
     x.fromString(string(buf));
+    // домножаем на 10^rootOrder через сдвиг экспоненты
+    x.exponent10 = addSignedStrings(x.exponent10, to_string(rootOrder));
+    x.normalize();
+    if (x.isZero()) x.fromString("1");
 
     BigDecimal two;
     two.fromString("2");
