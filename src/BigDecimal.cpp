@@ -129,7 +129,11 @@ void BigDecimal::normalize() {
     exponent10 = normalizeString(exponent10);
 }
 
-bool BigDecimal::fromString(const string& s) {
+bool BigDecimal::fromString(const string& sInput) {
+    // Принимаем как строчную 'e', так и заглавную 'E' в научной нотации.
+    string s = sInput;
+    for (char& ch : s) if (ch == 'E') ch = 'e';
+
     if (!validateDecimalString(s)) return false;
     size_t ePos = s.find_first_of('e');
     string mantissa         = (ePos != string::npos) ? s.substr(0, ePos) : s;
