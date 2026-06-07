@@ -5,7 +5,7 @@
 ## Сборка
 
 ```bash
-g++ -std=c++17 -Iinclude -o QuadraticSolver src/main.cpp src/BigDecimal.cpp src/UnsignedArith.cpp src/QuadSolver.cpp
+g++ -std=c++17 -Iinc -o QuadraticSolver src/main.cpp src/BigDecimal.cpp src/UnsignedArith.cpp src/QuadSolver.cpp
 ```
 
 Или через CMake:
@@ -46,7 +46,7 @@ bash run_tests.sh
 ## Структура
 
 ```
-include/                 — заголовки (.h)
+inc/                 — заголовки (.h)
 │   ├── QuadSolver.h
 │   ├── BigDecimal.h
 │   └── UnsignedArith.h
